@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swagger';
 import graphRoutes from './routes/graph.routes';
 
 const app = express();
@@ -7,6 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use('/api-docs', swaggerUi.serve as any, swaggerUi.setup(swaggerSpec) as any);
 app.use('/api', graphRoutes);
 
 app.get('/health', (req, res) => {
@@ -23,6 +26,7 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`  GET /api/nodes/kind/:kind - Get nodes by kind`);
     console.log(`  GET /api/public-services - Get public services`);
     console.log(`  GET /api/vulnerable-services - Get vulnerable services`);
+    console.log(`  Swagger UI: http://localhost:${PORT}/api-docs`);
   });
 }
 
