@@ -19,6 +19,56 @@ A RESTful API for querying and analyzing the Train Ticket microservices architec
    make build
    ```
 
+## 📂 Project Structure
+
+```text
+backend-graph-query/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── data/
+│   └── train-ticket-be.json
+├── scripts/
+│   ├── docker-commands.sh
+│   └── run-tests.sh
+├── src/
+│   ├── controllers/
+│   │   └── graph.controller.ts
+│   ├── filters/
+│   │   ├── base.filter.ts
+│   │   └── index.ts
+│   ├── models/
+│   │   └── graph.model.ts
+│   ├── routes/
+│   │   └── graph.routes.ts
+│   ├── services/
+│   │   └── graph.service.ts
+│   ├── index.ts
+│   └── swagger.ts
+├── test-results/
+│   └── .gitignore
+├── tests/
+│   ├── integration/
+│   │   └── api.test.ts
+│   └── unit/
+│       ├── filters.test.ts
+│       └── graph.service.test.ts
+├── .dockerignore
+├── .gitignore
+├── Dockerfile
+├── Dockerfile.dev
+├── Dockerfile.test
+├── Makefile
+├── README.md
+├── docker-compose.override.yml
+├── docker-compose.prod.yml
+├── docker-compose.yml
+├── jest.config.js
+├── package-lock.json
+├── package.json
+└── tsconfig.json
+```
+
 ## 🛠 Development & Production
 
 ### Run in Development Mode
