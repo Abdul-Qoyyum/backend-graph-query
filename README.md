@@ -66,16 +66,16 @@ The system is designed as a modular **Graph Analysis Engine** that processes mic
 ### Core Design Decisions
 
 #### 1. Filter Strategy Pattern
-We implemented a **Chainable Strategy Pattern** for graph filtering. This allows developers to compose complex queries (e.g., "Show me vulnerable services reachable from the public web") by simply stacking modular filter classes (`PublicStartFilter`, `SinkEndFilter`, etc.) without modifying the core traversal engine.
+I implemented a **Chainable Strategy Pattern** for graph filtering. This allows developers to compose complex queries (e.g., "Show me vulnerable services reachable from the public web") by simply stacking modular filter classes (`PublicStartFilter`, `SinkEndFilter`, etc.) without modifying the core traversal engine.
 
 #### 2. Adjacency List Traversal
-While the source data is a flat list of edges, we convert this into an **Adjacency List** at runtime. This allows for $O(1)$ lookup of direct neighbors, significantly improving the performance of the Depth-First Search (DFS) used for route finding.
+While the source data is a flat list of edges, I convert this into an **Adjacency List** at runtime. This allows for $O(1)$ lookup of direct neighbors, significantly improving the performance of the Depth-First Search (DFS) used for route finding.
 
 #### 3. In-Memory Processing
-To maximize speed and minimize infrastructure complexity, we use an in-memory storage approach. The graph is loaded from a JSON file into a service singleton, ensuring that all graph operations are handled at CPU/RAM speeds rather than waiting for disk or network I/O.
+To maximize speed and minimize infrastructure complexity, I use an in-memory storage approach. The graph is loaded from a JSON file into a service singleton, ensuring that all graph operations are handled at CPU/RAM speeds rather than waiting for disk or network I/O.
 
 #### 4. TypeScript & Strict Compliance
-We utilized TypeScript's strict mode to ensure data integrity during graph transformations. This prevents common "null-pointer" errors when navigating nodes that might not exist in the current filtered view.
+I utilized TypeScript's strict mode to ensure data integrity during graph transformations. This prevents common "null-pointer" errors when navigating nodes that might not exist in the current filtered view.
 
 ## 📡 API Endpoints Summary
 
