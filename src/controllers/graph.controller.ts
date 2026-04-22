@@ -18,7 +18,7 @@ export class GraphController {
       };
 
       const graph = this.graphService.getGraph(options);
-      
+
       res.json({
         success: true,
         data: graph,
@@ -37,7 +37,7 @@ export class GraphController {
     try {
       const { from, to } = req.query;
       const maxDepth = req.query.maxDepth ? parseInt(req.query.maxDepth as string) : 10;
-      
+
       if (!from || !to) {
         res.status(400).json({
           success: false,
@@ -47,11 +47,11 @@ export class GraphController {
       }
 
       const routes = this.graphService.findRoutes(from as string, to as string, maxDepth);
-      
+
       res.json({
         success: true,
-        data: routes,
-        count: routes.length
+        count: routes.length,
+        data: routes
       });
     } catch (error) {
       res.status(500).json({
@@ -66,7 +66,7 @@ export class GraphController {
     try {
       const { name } = req.params;
       const node = this.graphService.getNode(name);
-      
+
       if (!node) {
         res.status(404).json({
           success: false,
@@ -77,7 +77,7 @@ export class GraphController {
 
       const upstream = this.graphService.getUpstreamNodes(name);
       const downstream = this.graphService.getDownstreamNodes(name);
-      
+
       res.json({
         success: true,
         data: {
@@ -99,11 +99,11 @@ export class GraphController {
     try {
       const { kind } = req.params;
       const nodes = this.graphService.getNodesByKind(kind);
-      
+
       res.json({
         success: true,
-        data: nodes,
-        count: nodes.length
+        count: nodes.length,
+        data: nodes
       });
     } catch (error) {
       res.status(500).json({
@@ -118,11 +118,11 @@ export class GraphController {
     try {
       const graph = this.graphService.getGraph({ startFromPublic: true });
       const publicNodes = graph.nodes.filter(n => n.publicExposed === true);
-      
+
       res.json({
         success: true,
-        data: publicNodes,
-        count: publicNodes.length
+        count: publicNodes.length,
+        data: publicNodes
       });
     } catch (error) {
       res.status(500).json({
@@ -136,11 +136,11 @@ export class GraphController {
   getVulnerableServices = (req: Request, res: Response): void => {
     try {
       const graph = this.graphService.getGraph({ hasVulnerability: true });
-      
+
       res.json({
         success: true,
-        data: graph.nodes,
-        count: graph.nodes.length
+        count: graph.nodes.length,
+        data: graph.nodes
       });
     } catch (error) {
       res.status(500).json({

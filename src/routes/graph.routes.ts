@@ -74,6 +74,80 @@ router.get('/graph', graphController.getGraph);
  *                 success: { type: 'boolean' }
  *                 count: { type: 'integer' }
  *                 data: { type: 'array', items: { $ref: '#/components/schemas/Route' } }
+ *             example:
+ *               success: true
+ *               count: 9
+ *               data:
+ *                 - from: travel-plan-service
+ *                   to: train-service
+ *                   path: [travel-plan-service, route-plan-service, travel-service, basic-service, train-service]
+ *                   nodes:
+ *                     - { name: travel-plan-service, kind: service, language: java, path: train-ticket/ts-travel-plan-service, publicExposed: false }
+ *                     - { name: route-plan-service, kind: service, language: java, path: train-ticket/ts-route-plan-service, publicExposed: false }
+ *                     - { name: travel-service, kind: service, language: java, path: train-ticket/ts-travel-service, publicExposed: false }
+ *                     - { name: basic-service, kind: service, language: java, path: train-ticket/ts-basic-service, publicExposed: false }
+ *                     - { name: train-service, kind: service, language: java, path: train-ticket/ts-train-service, publicExposed: false }
+ *                 - from: travel-plan-service
+ *                   to: train-service
+ *                   path: [travel-plan-service, route-plan-service, travel-service, train-service]
+ *                   nodes:
+ *                     - { name: travel-plan-service, kind: service, language: java, path: train-ticket/ts-travel-plan-service, publicExposed: false }
+ *                     - { name: route-plan-service, kind: service, language: java, path: train-ticket/ts-route-plan-service, publicExposed: false }
+ *                     - { name: travel-service, kind: service, language: java, path: train-ticket/ts-travel-service, publicExposed: false }
+ *                     - { name: train-service, kind: service, language: java, path: train-ticket/ts-train-service, publicExposed: false }
+ *                 - from: travel-plan-service
+ *                   to: train-service
+ *                   path: [travel-plan-service, route-plan-service, travel2-service, basic-service, train-service]
+ *                   nodes:
+ *                     - { name: travel-plan-service, kind: service, language: java, path: train-ticket/ts-travel-plan-service, publicExposed: false }
+ *                     - { name: route-plan-service, kind: service, language: java, path: train-ticket/ts-route-plan-service, publicExposed: false }
+ *                     - { name: travel2-service, kind: service, language: java, path: train-ticket/ts-travel2-service, publicExposed: false }
+ *                     - { name: basic-service, kind: service, language: java, path: train-ticket/ts-basic-service, publicExposed: false }
+ *                     - { name: train-service, kind: service, language: java, path: train-ticket/ts-train-service, publicExposed: false }
+ *                 - from: travel-plan-service
+ *                   to: train-service
+ *                   path: [travel-plan-service, route-plan-service, travel2-service, train-service]
+ *                   nodes:
+ *                     - { name: travel-plan-service, kind: service, language: java, path: train-ticket/ts-travel-plan-service, publicExposed: false }
+ *                     - { name: route-plan-service, kind: service, language: java, path: train-ticket/ts-route-plan-service, publicExposed: false }
+ *                     - { name: travel2-service, kind: service, language: java, path: train-ticket/ts-travel2-service, publicExposed: false }
+ *                     - { name: train-service, kind: service, language: java, path: train-ticket/ts-train-service, publicExposed: false }
+ *                 - from: travel-plan-service
+ *                   to: train-service
+ *                   path: [travel-plan-service, travel-service, basic-service, train-service]
+ *                   nodes:
+ *                     - { name: travel-plan-service, kind: service, language: java, path: train-ticket/ts-travel-plan-service, publicExposed: false }
+ *                     - { name: travel-service, kind: service, language: java, path: train-ticket/ts-travel-service, publicExposed: false }
+ *                     - { name: basic-service, kind: service, language: java, path: train-ticket/ts-basic-service, publicExposed: false }
+ *                     - { name: train-service, kind: service, language: java, path: train-ticket/ts-train-service, publicExposed: false }
+ *                 - from: travel-plan-service
+ *                   to: train-service
+ *                   path: [travel-plan-service, travel-service, train-service]
+ *                   nodes:
+ *                     - { name: travel-plan-service, kind: service, language: java, path: train-ticket/ts-travel-plan-service, publicExposed: false }
+ *                     - { name: travel-service, kind: service, language: java, path: train-ticket/ts-travel-service, publicExposed: false }
+ *                     - { name: train-service, kind: service, language: java, path: train-ticket/ts-train-service, publicExposed: false }
+ *                 - from: travel-plan-service
+ *                   to: train-service
+ *                   path: [travel-plan-service, travel2-service, basic-service, train-service]
+ *                   nodes:
+ *                     - { name: travel-plan-service, kind: service, language: java, path: train-ticket/ts-travel-plan-service, publicExposed: false }
+ *                     - { name: travel2-service, kind: service, language: java, path: train-ticket/ts-travel2-service, publicExposed: false }
+ *                     - { name: basic-service, kind: service, language: java, path: train-ticket/ts-basic-service, publicExposed: false }
+ *                     - { name: train-service, kind: service, language: java, path: train-ticket/ts-train-service, publicExposed: false }
+ *                 - from: travel-plan-service
+ *                   to: train-service
+ *                   path: [travel-plan-service, travel2-service, train-service]
+ *                   nodes:
+ *                     - { name: travel-plan-service, kind: service, language: java, path: train-ticket/ts-travel-plan-service, publicExposed: false }
+ *                     - { name: travel2-service, kind: service, language: java, path: train-ticket/ts-travel2-service, publicExposed: false }
+ *                     - { name: train-service, kind: service, language: java, path: train-ticket/ts-train-service, publicExposed: false }
+ *                 - from: travel-plan-service
+ *                   to: train-service
+ *                   path: [travel-plan-service, train-service]
+ *                   nodes:
+ *                     - { name: travel-plan-service, kind: service, language: java, path: train-ticket/ts-travel-plan-service, publicExposed: false }
+ *                     - { name: train-service, kind: service, language: java, path: train-ticket/ts-train-service, publicExposed: false }
  *       400:
  *         description: Missing required parameters.
  */
@@ -91,7 +165,7 @@ router.get('/routes', graphController.getRoutes);
  *         required: true
  *         schema:
  *           type: string
- *         example: ts-order-service
+ *         example: travel-plan-service
  *     responses:
  *       200:
  *         description: Detailed node information.

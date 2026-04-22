@@ -1,0 +1,101 @@
+services:
+  # Production service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: graph-query-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      - ./data:/app/data:ro  # Read-only mount for data
+    networks:
+      - graph-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {r.statusCode === 200 ? process.exit(0) : process.exit(1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Development service with hot reload
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: graph-query-dev
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # Debug port
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    volumes:
+      - ./src:/app/src:delegated
+      - ./data:/app/data:delegated
+      - ./tests:/app/tests:delegated
+      - /app/node_modules  # Anonymous volume for node_modules
+    networks:
+      - graph-network
+    command: npm run dev
+
+  # Test service
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: graph-query-test
+    environment:
+      - NODE_ENV=test
+    volumes:
+      - ./coverage:/app/coverage
+      - ./test-results:/app/test-results
+    networks:
+      - graph-network
+    command: npm test
+    profiles:
+      - testing
+
+  # Test watch mode
+  test-watch:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: graph-query-test-watch
+    environment:
+      - NODE_ENV=test
+    volumes:
+      - ./src:/app/src:delegated
+      - ./tests:/app/tests:delegated
+      - ./coverage:/app/coverage
+      - /app/node_modules
+    networks:
+      - graph-network
+    command: npm run test:watch
+    profiles:
+      - testing
+
+  # Test with coverage
+  test-coverage:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: graph-query-test-coverage
+    environment:
+      - NODE_ENV=test
+    volumes:
+      - ./coverage:/app/coverage
+    networks:
+      - graph-network
+    command: npm run test:coverage
+    profiles:
+      - testing
+
+networks:
+  graph-network:
+    driver: bridge

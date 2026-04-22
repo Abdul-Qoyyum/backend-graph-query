@@ -1,0 +1,7 @@
+services:
+  dev:
+    build:
+      args:
+        - NODE_ENV=development
+    stdin_open: true
+    tty: true

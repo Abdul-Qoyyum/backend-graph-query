@@ -1,0 +1,24 @@
+FROM node:22.12.0-alpine
+
+WORKDIR /app
+
+# Enable corepack for package manager consistency
+RUN corepack enable
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig.json ./
+
+# Install all dependencies (including dev)
+RUN npm ci && \
+    npm cache clean --force
+
+# Copy application code
+COPY . .
+
+# Expose port and debug port
+EXPOSE 3000 9229
+
+# Start development server with hot reload
+# The local nodemon and ts-node from node_modules will be used
+CMD ["npm", "run", "dev"]
