@@ -2,46 +2,87 @@
 
 A RESTful API for querying and analyzing the Train Ticket microservices architecture graph.
 
-## Features
+## 🚀 Getting Started
 
-- **Graph Querying**: Retrieve the complete service graph with relationships
-- **Flexible Filtering**: Filter routes based on:
-  - Starting from public services (`publicExposed: true`)
-  - Ending in sinks (RDS/SQS)
-  - Services with vulnerabilities
-- **Route Finding**: Discover all possible routes between services
-- **Node Inspection**: Get detailed information about specific services
-- **Extensible Filter System**: Easily add new filter strategies
+### Prerequisites
+- [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install/)
+- `make` (standard on macOS and Linux)
 
-## Architecture Decisions
+### Setup
+1. **Clone the repository**
+2. **Grant execution permissions to scripts**:
+   ```bash
+   chmod +x scripts/run-tests.sh scripts/docker-commands.sh
+   ```
+3. **Initialize the project**:
+   ```bash
+   make build
+   ```
 
-### 1. **Filter Strategy Pattern**
-Used the Strategy pattern for filters to make the system easily extensible. Each filter implements the `FilterStrategy` interface, allowing new filters to be added without modifying existing code.
+## 🛠 Development & Production
 
-### 2. **Adjacency List Representation**
-Converted edge list to adjacency lists for efficient graph traversal and route finding operations.
-
-### 3. **In-Memory Data Storage**
-The JSON file is loaded into memory at startup for fast query performance. Suitable for the graph size (~50 nodes, ~30 edges).
-
-### 4. **TypeScript Implementation**
-Chose TypeScript for:
-- Type safety and better developer experience
-- Easier maintenance and refactoring
-- Better IDE support
-
-## API Endpoints
-
-### Graph Operations
-
-#### `GET /api/graph`
-Retrieve the graph with optional filters.
-
-**Query Parameters:**
-- `startFromPublic` (boolean): Filter routes starting from public services
-- `endInSink` (boolean): Filter routes ending in RDS/SQS
-- `hasVulnerability` (boolean): Filter services with vulnerabilities
-
-**Example:**
+### Run in Development Mode
+Starts the application with hot-reload (nodemon) and a debugger listening on port `9229`.
 ```bash
-curl "http://localhost:3000/api/graph?startFromPublic=true&hasVulnerability=true"
+make dev
+```
+
+### Run in Production Mode
+Starts the production-optimized container.
+```bash
+make up
+```
+
+### Accessing the API
+Once running, you can access:
+- **Swagger Documentation**: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+## 🧪 Testing
+
+The project uses Jest for unit and integration testing, executed inside Docker for environment consistency.
+
+- **Run all tests**:
+  ```bash
+  make test
+  ```
+- **Watch mode** (for development):
+  ```bash
+  make test-watch
+  ```
+- **Coverage report**:
+  ```bash
+  make test-coverage
+  ```
+
+## 🧠 Solution Overview
+
+The system is designed as a modular **Graph Analysis Engine** that processes microservice dependency data. The primary goal is to provide a flexible way to query complex service relationships without the overhead of a dedicated graph database (like Neo4j) for this scale.
+
+### Key Assumptions
+- **Static Graph Model**: The service graph is relatively static and can be loaded fully into memory at startup.
+- **Scale**: The system is optimized for small-to-medium graphs (dozens to hundreds of nodes), which is typical for a microservices architecture.
+- **Read-Heavy Workload**: The API is optimized for fast query responses over data mutation.
+
+### Core Design Decisions
+
+#### 1. Filter Strategy Pattern
+We implemented a **Chainable Strategy Pattern** for graph filtering. This allows developers to compose complex queries (e.g., "Show me vulnerable services reachable from the public web") by simply stacking modular filter classes (`PublicStartFilter`, `SinkEndFilter`, etc.) without modifying the core traversal engine.
+
+#### 2. Adjacency List Traversal
+While the source data is a flat list of edges, we convert this into an **Adjacency List** at runtime. This allows for $O(1)$ lookup of direct neighbors, significantly improving the performance of the Depth-First Search (DFS) used for route finding.
+
+#### 3. In-Memory Processing
+To maximize speed and minimize infrastructure complexity, we use an in-memory storage approach. The graph is loaded from a JSON file into a service singleton, ensuring that all graph operations are handled at CPU/RAM speeds rather than waiting for disk or network I/O.
+
+#### 4. TypeScript & Strict Compliance
+We utilized TypeScript's strict mode to ensure data integrity during graph transformations. This prevents common "null-pointer" errors when navigating nodes that might not exist in the current filtered view.
+
+## 📡 API Endpoints Summary
+
+
+- `GET /api/graph`: Retrieve the graph with optional filters (`startFromPublic`, `endInSink`, `hasVulnerability`).
+- `GET /api/routes`: Find paths between two nodes (`from`, `to`, `maxDepth`).
+- `GET /api/node/:name`: Get detailed metadata for a specific service.
+- `GET /api/nodes/kind/:kind`: Filter nodes by type (`service`, `rds`, `sqs`).
+- `GET /api/public-services`: Quick access to all public-facing nodes.
+- `GET /api/vulnerable-services`: Identify all nodes with known vulnerabilities.
