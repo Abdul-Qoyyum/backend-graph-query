@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
+    image: graph-query-api:latest
     container_name: graph-query-api
     ports:
       - "3000:3000"
